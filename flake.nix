@@ -12,16 +12,15 @@
       devShell.${system} = let
         pkgs = import nixpkgs {        
           inherit system;
-          overlays = [ rust-overlay.overlay ];          
+          overlays = [ rust-overlay.overlays.default ];
         };
       in (({ pkgs, ... }:
         pkgs.mkShell {          
           nativeBuildInputs = with pkgs; [ 
-            pkg-config alsa-lib udev python3
-            vscodium wasm-bindgen-cli 
+            pkg-config alsa-lib udev python3 wasm-bindgen-cli
           ];
           buildInputs = with pkgs; [            
-            cargo
+            cargo rustc rustfmt pre-commit rustPackages.clippy rust-analyzer
             cargo-watch
             nodejs
             wasm-pack
@@ -29,9 +28,14 @@
               extensions = [ "rust-src" ];
               targets = [ "wasm32-unknown-unknown" ];
             })
+            # wasm-opt -Os --output output.wasm input.wasm
+            binaryen
+            # better linker
+            clang
           ];
 
           shellHook = "";
+          RUST_SRC_PATH = pkgs.rustPlatform.rustLibSrc;
         }) { pkgs = pkgs; });
     };
 }
