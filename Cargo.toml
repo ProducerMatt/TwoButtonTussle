@@ -1,5 +1,5 @@
 [package]
-name = "wasm-test"
+name = "two-button-tussle"
 version = "0.1.0"
 edition = "2021"
 
